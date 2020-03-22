@@ -1,15 +1,15 @@
+const express = require('express');
 const http = require('http');
 const socketIO = require('socket.io');
 const fs = require('fs');
 
-const server = http.createServer((req,res)=>{
-  fs.readFile(`${__dirname}/public/index.html`,(err,data)=>{
-    res.writeHead(200);
-    res.end(data);
-  });
+const app = express();
+
+app.get('/',(req,res)=>{
+  res.sendFile(`${__dirname}/public/index.html`)
 });
 
-server.listen(3000);
+const server = http.createServer(app).listen(3000);
 const io = socketIO(server);
 
 io.on('connection',socket=>{
