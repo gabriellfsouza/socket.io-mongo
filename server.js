@@ -1,22 +1,19 @@
 const express = require('express');
-const http = require('http');
 const socketIO = require('socket.io');
-const fs = require('fs');
+const http = require('http');
+const mongoose = require('mongoose');
 
 const app = express();
 
-app.get('/',(req,res)=>{
-  res.sendFile(`${__dirname}/public/index.html`)
-});
+app.use('/',express.static(`${__dirname}/public`));
 
 const server = http.createServer(app).listen(3000);
-const io = socketIO(server);
+
+const io = socketIO(server)
 
 io.on('connection',socket=>{
-  socket.emit('greeting-from-server',{
-    greeting: 'Hello Client'
-  });
-  socket.on('greeting-from-client',message=>{
-    console.log(message);
+  const controllers = ['comments','posts'];
+  controllers.forEach((controller,i)=>{
+    require(`./controllers/${controller}.controller`)(socket);
   })
 });
